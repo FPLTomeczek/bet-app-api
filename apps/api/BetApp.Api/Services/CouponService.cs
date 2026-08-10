@@ -45,15 +45,15 @@ public class CouponService
         var errors = new List<ValidationError>();
 
         if (!await _context.AppUsers.AnyAsync(u => u.Id == request.UserId))
-            errors.Add(new ValidationError(nameof(request.UserId), "User does not exist."));
+            errors.Add(new ValidationError(nameof(request.UserId), ErrorCodes.UserNotFound));
 
         if (request.BonusId is int bonusId && !await _context.Bonuses.AnyAsync(b => b.Id == bonusId))
-            errors.Add(new ValidationError(nameof(request.BonusId), "Bonus does not exist."));
+            errors.Add(new ValidationError(nameof(request.BonusId), ErrorCodes.BonusNotFound));
 
         var eventIds = request.Selections.Select(s => s.EventId).Distinct().ToList();
         var existingEvents = await _context.Events.CountAsync(e => eventIds.Contains(e.Id));
         if (existingEvents != eventIds.Count)
-            errors.Add(new ValidationError(nameof(request.Selections), "One or more selections reference a non-existent event."));
+            errors.Add(new ValidationError(nameof(request.Selections), ErrorCodes.SelectionEventNotFound));
 
         if (errors.Count > 0)
             return Result<CouponResponse>.Invalid(errors);

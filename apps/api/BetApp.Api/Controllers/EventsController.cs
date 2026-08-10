@@ -49,7 +49,7 @@ public class EventsController : ControllerBase
     {
         if (!await _context.SportCategories.AnyAsync(c => c.Id == request.SportCategoryId))
         {
-            ModelState.AddModelError(nameof(request.SportCategoryId), "Sport category does not exist.");
+            ModelState.AddModelError(nameof(request.SportCategoryId), ErrorCodes.SportCategoryNotFound);
             return ValidationProblem(ModelState);
         }
 
@@ -82,7 +82,7 @@ public class EventsController : ControllerBase
 
         if (!await _context.SportCategories.AnyAsync(c => c.Id == request.SportCategoryId))
         {
-            ModelState.AddModelError(nameof(request.SportCategoryId), "Sport category does not exist.");
+            ModelState.AddModelError(nameof(request.SportCategoryId), ErrorCodes.SportCategoryNotFound);
             return ValidationProblem(ModelState);
         }
 
@@ -156,13 +156,13 @@ public class EventsController : ControllerBase
             return NotFound();
 
         if (request.TeamId is null && request.PlayerId is null)
-            ModelState.AddModelError(nameof(request.TeamId), "A participant must reference a team or a player.");
+            ModelState.AddModelError(nameof(request.TeamId), ErrorCodes.ParticipantRequiresTeamOrPlayer);
 
         if (request.TeamId is int teamId && !await _context.Teams.AnyAsync(t => t.Id == teamId))
-            ModelState.AddModelError(nameof(request.TeamId), "Team does not exist.");
+            ModelState.AddModelError(nameof(request.TeamId), ErrorCodes.TeamNotFound);
 
         if (request.PlayerId is int playerId && !await _context.Players.AnyAsync(p => p.Id == playerId))
-            ModelState.AddModelError(nameof(request.PlayerId), "Player does not exist.");
+            ModelState.AddModelError(nameof(request.PlayerId), ErrorCodes.PlayerNotFound);
 
         if (!ModelState.IsValid)
             return ValidationProblem(ModelState);

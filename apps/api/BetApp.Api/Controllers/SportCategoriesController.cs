@@ -51,7 +51,7 @@ public class SportCategoriesController : ControllerBase
         // letting the DB constraint surface as a raw 500.
         if (await _context.SportCategories.AnyAsync(c => c.Name == request.Name))
         {
-            ModelState.AddModelError(nameof(request.Name), "A category with this name already exists.");
+            ModelState.AddModelError(nameof(request.Name), ErrorCodes.CategoryNameTaken);
             return ValidationProblem(ModelState);
         }
 
@@ -78,7 +78,7 @@ public class SportCategoriesController : ControllerBase
 
         if (await _context.SportCategories.AnyAsync(c => c.Name == request.Name && c.Id != id))
         {
-            ModelState.AddModelError(nameof(request.Name), "A category with this name already exists.");
+            ModelState.AddModelError(nameof(request.Name), ErrorCodes.CategoryNameTaken);
             return ValidationProblem(ModelState);
         }
 

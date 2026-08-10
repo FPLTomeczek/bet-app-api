@@ -49,10 +49,10 @@ public class AppUsersController : ControllerBase
     public async Task<ActionResult<AppUserResponse>> Create(CreateAppUserRequest request)
     {
         if (await _context.AppUsers.AnyAsync(u => u.Username == request.Username))
-            ModelState.AddModelError(nameof(request.Username), "Username is already taken.");
+            ModelState.AddModelError(nameof(request.Username), ErrorCodes.UsernameTaken);
 
         if (await _context.AppUsers.AnyAsync(u => u.Email == request.Email))
-            ModelState.AddModelError(nameof(request.Email), "Email is already registered.");
+            ModelState.AddModelError(nameof(request.Email), ErrorCodes.EmailTaken);
 
         if (!ModelState.IsValid)
             return ValidationProblem(ModelState);
@@ -86,10 +86,10 @@ public class AppUsersController : ControllerBase
             return NotFound();
 
         if (await _context.AppUsers.AnyAsync(u => u.Username == request.Username && u.Id != id))
-            ModelState.AddModelError(nameof(request.Username), "Username is already taken.");
+            ModelState.AddModelError(nameof(request.Username), ErrorCodes.UsernameTaken);
 
         if (await _context.AppUsers.AnyAsync(u => u.Email == request.Email && u.Id != id))
-            ModelState.AddModelError(nameof(request.Email), "Email is already registered.");
+            ModelState.AddModelError(nameof(request.Email), ErrorCodes.EmailTaken);
 
         if (!ModelState.IsValid)
             return ValidationProblem(ModelState);

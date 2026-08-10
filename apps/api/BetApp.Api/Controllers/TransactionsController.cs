@@ -52,7 +52,7 @@ public class TransactionsController : ControllerBase
     {
         if (!await _context.AppUsers.AnyAsync(u => u.Id == request.UserId))
         {
-            ModelState.AddModelError(nameof(request.UserId), "User does not exist.");
+            ModelState.AddModelError(nameof(request.UserId), ErrorCodes.UserNotFound);
             return ValidationProblem(ModelState);
         }
 

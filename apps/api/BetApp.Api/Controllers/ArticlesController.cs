@@ -49,7 +49,7 @@ public class ArticlesController : ControllerBase
     {
         if (request.SportCategoryId is int categoryId && !await _context.SportCategories.AnyAsync(c => c.Id == categoryId))
         {
-            ModelState.AddModelError(nameof(request.SportCategoryId), "Sport category does not exist.");
+            ModelState.AddModelError(nameof(request.SportCategoryId), ErrorCodes.SportCategoryNotFound);
             return ValidationProblem(ModelState);
         }
 
@@ -82,7 +82,7 @@ public class ArticlesController : ControllerBase
 
         if (request.SportCategoryId is int categoryId && !await _context.SportCategories.AnyAsync(c => c.Id == categoryId))
         {
-            ModelState.AddModelError(nameof(request.SportCategoryId), "Sport category does not exist.");
+            ModelState.AddModelError(nameof(request.SportCategoryId), ErrorCodes.SportCategoryNotFound);
             return ValidationProblem(ModelState);
         }
 

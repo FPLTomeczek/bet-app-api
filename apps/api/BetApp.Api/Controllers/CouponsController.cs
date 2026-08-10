@@ -49,7 +49,7 @@ public class CouponsController : ControllerBase
         if (!result.IsSuccess)
         {
             foreach (var error in result.Errors)
-                ModelState.AddModelError(error.Field, error.Message);
+                ModelState.AddModelError(error.Field, error.Code);
 
             return ValidationProblem(ModelState);
         }

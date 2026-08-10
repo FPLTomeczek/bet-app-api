@@ -49,7 +49,7 @@ public class PlayersController : ControllerBase
     {
         if (request.TeamId is int teamId && !await _context.Teams.AnyAsync(t => t.Id == teamId))
         {
-            ModelState.AddModelError(nameof(request.TeamId), "Team does not exist.");
+            ModelState.AddModelError(nameof(request.TeamId), ErrorCodes.TeamNotFound);
             return ValidationProblem(ModelState);
         }
 
@@ -82,7 +82,7 @@ public class PlayersController : ControllerBase
 
         if (request.TeamId is int teamId && !await _context.Teams.AnyAsync(t => t.Id == teamId))
         {
-            ModelState.AddModelError(nameof(request.TeamId), "Team does not exist.");
+            ModelState.AddModelError(nameof(request.TeamId), ErrorCodes.TeamNotFound);
             return ValidationProblem(ModelState);
         }
 

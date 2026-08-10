@@ -49,7 +49,7 @@ public class TeamsController : ControllerBase
     {
         if (!await _context.SportCategories.AnyAsync(c => c.Id == request.SportCategoryId))
         {
-            ModelState.AddModelError(nameof(request.SportCategoryId), "Sport category does not exist.");
+            ModelState.AddModelError(nameof(request.SportCategoryId), ErrorCodes.SportCategoryNotFound);
             return ValidationProblem(ModelState);
         }
 
@@ -81,7 +81,7 @@ public class TeamsController : ControllerBase
 
         if (!await _context.SportCategories.AnyAsync(c => c.Id == request.SportCategoryId))
         {
-            ModelState.AddModelError(nameof(request.SportCategoryId), "Sport category does not exist.");
+            ModelState.AddModelError(nameof(request.SportCategoryId), ErrorCodes.SportCategoryNotFound);
             return ValidationProblem(ModelState);
         }
 
