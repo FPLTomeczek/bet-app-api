@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import { StatusBadge } from "./status-badge";
-import { STATUS_LABELS, STATUS_STYLES } from "./constants";
+import { STATUS_STYLES, STATUS_LABELS } from "./constants";
 import type { EventResponse } from "./lib/api";
 
 describe("StatusBadge", () => {

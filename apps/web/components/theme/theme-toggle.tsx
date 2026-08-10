@@ -3,6 +3,7 @@
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
+import { THEME_TOGGLE_TEXTS } from "./constants";
 
 // Both icons are always in the DOM; visibility is pure CSS via the `dark:` (class) variant,
 // so nothing depends on the theme during render — that avoids a hydration mismatch (the server
@@ -14,7 +15,7 @@ export function ThemeToggle() {
     <Button
       variant="outline"
       size="icon"
-      aria-label="Przełącz motyw"
+      aria-label={THEME_TOGGLE_TEXTS.label}
       onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
     >
       <Sun className="hidden dark:block" />

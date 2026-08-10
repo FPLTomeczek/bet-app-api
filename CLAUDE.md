@@ -31,6 +31,17 @@ Konsekwencja praktyczna: **zmiana API i jej użycie we froncie idą w jednym com
 - **Generacja:** `npm --prefix apps/web run gen:api` (API musi działać) → `apps/web/app/lib/api-types.ts`. Plik jest **commitowany** — dzięki temu repo buduje się bez żywego API, a diff w PR pokazuje każdą zmianę kontraktu. Front sięga po typy przez `apps/web/app/lib/api.ts`.
 - Enumy jadą po HTTP jako **string** dzięki `[JsonConverter(typeof(JsonStringEnumConverter<T>))]` na samym typie enuma (w modelach) — atrybut widzi zarówno serializer, jak i generator schematu OpenAPI, więc wire format i kontrakt się nie rozjeżdżają. (Globalna rejestracja konwertera by tego nie dała — schemat raportowałby `integer`.)
 
+### API nie wysyła tekstów dla użytkownika
+Brzmienie komunikatu to **prezentacja**, a prezentacją włada front. API zwraca **kod** (`sport_category_not_found`) w `ValidationProblemDetails.errors`; front mapuje go na polski tekst. To ten sam wzorzec co enumy: po drucie jedzie maszynowe `"Scheduled"`, a użytkownik widzi „Zaplanowane".
+
+| Warstwa | Plik | Rola |
+|---|---|---|
+| API | `apps/api/BetApp.Api/ErrorCodes.cs` | jedyne źródło kodów — `const string`, `snake_case` |
+| Front | `apps/web/app/lib/texts.ts` | płaski katalog wszystkich tekstów PL |
+| Front | `apps/web/app/lib/errors.ts` | mapa kod → tekst + `translateValidationErrors()` |
+
+Dlaczego nie `.resx` + `Accept-Language` po stronie API: to się opłaca, gdy klientów jest wielu albo API samo generuje maile/PDF-y. Tu jest **jeden** klient i to on zna polski — lokalizacja w API rozbiłaby prezentację na dwie warstwy, a front nie mógłby poprawić literówki bez deploya backendu.
+
 ## Konfiguracja i sekrety
 
 Nowa wartość konfigurowalna → najpierw zaklasyfikuj, potem umieść:
@@ -39,7 +50,7 @@ Nowa wartość konfigurowalna → najpierw zaklasyfikuj, potem umieść:
 |---|---|---|---|
 | **Sekret** | ujawnienie = incydent | User Secrets (API) / `.env.local` (web) | hasło Postgresa, przyszły klucz JWT |
 | **Config środowiskowy** | nie tajny, ale **różni się** dev/prod | `.env*`, nadpisywany zmienną na prod | `API_BASE_URL`, `POSTGRES_*` |
-| **Stała aplikacji** | taka sama **wszędzie** | zwykły kod | `STATUS_LABELS`, `revalidate = 30` |
+| **Stała aplikacji** | taka sama **wszędzie** | zwykły kod | `LOCALE`, teksty UI, `revalidate = 30` |
 
 Trzeci wiersz to ten, na którym się wykłada — nie przenosić stałych do env. `revalidate` w ogóle nie może tam trafić (Next wymaga literału w pliku segmentu).
 

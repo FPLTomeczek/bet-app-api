@@ -1,5 +1,7 @@
+import { LOCALE } from "./lib/locale";
+
 export function formatEventStart(startTime: string, timeZone: string): string {
-  return new Date(startTime).toLocaleString("pl-PL", {
+  return new Date(startTime).toLocaleString(LOCALE, {
     timeZone,
     day: "2-digit",
     month: "short",

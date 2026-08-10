@@ -1,4 +1,5 @@
 import type { EventResponse } from "./lib/api";
+import { texts } from "./lib/texts";
 
 // Keyed by the contract's status union, so adding or dropping a status is a compile error.
 export const STATUS_STYLES: Record<EventResponse["status"], string> = {
@@ -9,8 +10,24 @@ export const STATUS_STYLES: Record<EventResponse["status"], string> = {
 };
 
 export const STATUS_LABELS: Record<EventResponse["status"], string> = {
-  Scheduled: "Zaplanowane",
-  Live: "Na żywo",
-  Finished: "Zakończone",
-  Cancelled: "Odwołane",
+  Scheduled: texts.statusScheduled,
+  Live: texts.statusLive,
+  Finished: texts.statusFinished,
+  Cancelled: texts.statusCancelled,
+};
+
+export const METADATA_TEXTS = {
+  title: texts.metadataTitle,
+  description: texts.metadataDescription,
+};
+
+export const EVENTS_TEXTS = {
+  title: texts.eventsTitle,
+  source: texts.eventsSource,
+  count: {
+    one: texts.eventsCountOne,
+    few: texts.eventsCountFew,
+    many: texts.eventsCountMany,
+    other: texts.eventsCountFew,
+  },
 };

@@ -1,4 +1,6 @@
 import { getEvents } from "./lib/queries";
+import { EVENTS_TEXTS } from "./constants";
+import { plural } from "./lib/plural";
 import { EventRow } from "./event-row";
 import { ThemeToggle } from "@/components/theme/theme-toggle";
 
@@ -14,9 +16,12 @@ export default async function Home() {
     <main className="mx-auto min-h-screen max-w-3xl px-6 py-12 font-sans">
       <div className="mb-8 flex items-start justify-between gap-4">
         <div>
-          <h1 className="mb-1 text-2xl font-semibold tracking-tight">Wydarzenia</h1>
+          <h1 className="mb-1 text-2xl font-semibold tracking-tight">
+            {EVENTS_TEXTS.title}
+          </h1>
           <p className="text-sm text-zinc-500">
-            {events.length} {events.length === 1 ? "wydarzenie" : "wydarzeń"} z API
+            {events.length} {plural(events.length, EVENTS_TEXTS.count)}{" "}
+            {EVENTS_TEXTS.source}
           </p>
         </div>
         <ThemeToggle />

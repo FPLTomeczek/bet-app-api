@@ -34,8 +34,34 @@ Dziel kod **modułowo**. Moduł = folder z głównym komponentem, a obok — **t
 | `<moduł>.test.tsx` | testy modułu |
 
 Reguły i wyjątki:
+- **W `constants.ts` modułu nie ma literałów tekstowych** — same stringi żyją w `app/lib/texts.ts`, a `constants.ts` składa z nich nazwany obiekt modułu (patrz „Teksty").
 - **Config segmentu Next (`export const revalidate`, `dynamic`, …) zostaje w `page.tsx`.** Next czyta go przez **statyczną analizę pliku-segmentu** — re-eksport z `constants.ts` nie zadziała. To kontrakt frameworka, nie stała aplikacji.
 - **Komponent feature vs prymityw DS:** komponent znający DTO domenowe (`EventRow`) zostaje przy module; generyczny prymityw prezentacyjny (`StatusBadge`) to kandydat do warstwy Design System.
+
+## Teksty
+Zero literałów tekstowych w JSX — pilnuje tego reguła `react/jsx-no-literals` (`npm run lint`). Podział jest **dwuwarstwowy**:
+
+| Warstwa | Plik | Zawiera |
+|---|---|---|
+| Katalog | `app/lib/texts.ts` | **wszystkie** stringi aplikacji, płasko, jeden obiekt `as const` |
+| Moduł | `<moduł>/constants.ts` | nazwane obiekty złożone z katalogu — `EVENTS_TEXTS`, `STATUS_LABELS`, `THEME_TOGGLE_TEXTS` |
+
+Komponent importuje **wyłącznie** ze swojego `constants.ts`, nigdy z `texts.ts`:
+
+```tsx
+import { EVENTS_TEXTS } from "./constants";
+<h1>{EVENTS_TEXTS.title}</h1>
+```
+
+Po co warstwa pośrednia: call-site nie zna nazewnictwa w katalogu, więc przeniesienie tekstu między modułami to jedna linia w `constants.ts`, a nie N miejsc użycia. Katalog zostaje płaski, bo taki kształt ma plik tłumaczeń (`messages/pl.json`) — jeśli kiedyś nim będzie, nie trzeba go przestawiać.
+
+Aplikacja jest **jednojęzyczna (pl)**: to typowany obiekt, nie biblioteka i18n.
+
+- **`STATUS_LABELS` ma jawną adnotację `Record<EventResponse["status"], string>`** (bez `as const`) — brak etykiety dla nowego statusu z kontraktu ma być **błędem kompilacji**. Płaski katalog sam tego nie wymusi.
+- **`LOCALE` (`app/lib/locale.ts`) to stała aplikacji, nie config** — patrz tabela w roocie. Przy drugim języku locale stanie się daną żądania (segment URL / `Accept-Language`), a nie zmienną środowiskową.
+- **Pluralizacja przez `plural()`** (`app/lib/plural.ts`), nigdy `count === 1 ? a : b` — polski ma trzy formy (1 / 2-4 / 5+), ternary zna dwie.
+- **Błędy z API to kody, nie teksty.** Mapa kod → tekst i `translateValidationErrors()` w `app/lib/errors.ts`. Nieznany kod → komunikat ogólny, żeby angielskie zdania DataAnnotations nie wyciekły do UI.
+- **Import w Client Component wciąga katalog do bundla** (`theme-toggle.tsx`). Przy jednym języku i tym rozmiarze bez znaczenia; przy prawdziwym i18n wymagałoby cięcia per-locale.
 
 ## Testy
 **Vitest + React Testing Library** (unit/komponenty). E2E (Playwright) — jeszcze nie ma, dojdzie przy stabilnych flow.
